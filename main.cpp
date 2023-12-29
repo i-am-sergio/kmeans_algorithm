@@ -17,7 +17,7 @@ int main(){
     cout << "Points readed: " << points.size() << endl;
 
     
-    Kmeans<3> kmeans(points);
+    Kmeans<75> kmeans(points);
     kmeans.printCentroides();
 
     //vector<vector<Point2D>> clusters = kmeans.KMeans_def(points);
