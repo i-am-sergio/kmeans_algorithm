@@ -13,7 +13,7 @@ namespace rdr {
         public:
             CSVReader(const string& filename) : filename(filename) {}
 
-            vector<vector<double>> readCSV(bool header = false) {
+            vector<vector<double>> readCSV(bool header = false, int numPoints = 2400) {
                 ifstream file(filename);
                 vector<vector<double>> data;
 
@@ -26,6 +26,7 @@ namespace rdr {
                 
                 if(header) getline(file, line); // Ignora la primera linea (header)
 
+                int c = 0;
                 while (getline(file, line)) {
                     vector<double> row;
                     stringstream ss(line);
@@ -37,6 +38,8 @@ namespace rdr {
                     }
                     // Agrega la fila al vector bidimensional
                     data.push_back(row);
+                    c++;
+                    if(c == numPoints) break;
                 }
 
                 file.close();
