@@ -39,7 +39,7 @@ def draw_clusters(posiciones_centroides, clusteres, graph_name):
         plt.scatter(x, y, s=20)
     # Dibujar los centroides
     for x, y in posiciones_centroides:
-        plt.scatter(x, y, marker='*', color='black', s=50)
+        plt.scatter(x, y, marker='+', color='black', s=50)
     plt.title("Clusters")
     plt.savefig(graph_name)
     plt.show()
@@ -57,15 +57,55 @@ def draw_clusters_result(file_name,graph_name):
     draw_clusters(posiciones_centroides, clusteres, graph_name)
 
 
+draw_clusters_result('clusters1.csv','clusters_75.png')
 
-draw_clusters_result('clusters1.csv','1.png')
+# draw_clusters_result('clusters2.csv','clusters_3.png')
+# draw_clusters_result('clusters3.csv','clusters_15.png')
+# draw_clusters_result('clusters4.csv','clusters_50.png')
 
-# for i in range(1,4):
-#     draw_clusters_result(f'clusters{i}.csv',f'{i}.png')
+
+archivo = 'ejerC.csv'  
+# Leer el archivo CSV con numpy
+datos = np.genfromtxt(archivo, delimiter=',')
+resultados_kdtree = datos[::2]  # Seleccionar filas pares (0, 2, 4, ...)
+resultados_fuerza_bruta = datos[1::2]  # Seleccionar filas impares (1, 3, 5, ...)
+k = [5, 15, 25, 50, 75]
+n_valores = [1000, 1150, 1300, 1450, 1600, 1750, 1900, 2050, 2200, 2400]
 
 
-# Utilizando el conjuntos de archivos adjunto en este trabajo que contiene 2400 puntos, analizar el tiempo
-# de ejecuci ́on de las dos versiones de k-means con un k fijo k = {5, 15, 25, 50, 75}
-    
-def draw_time_result(file_name,graph_name):
-    pass
+def graph_c(k,file_name):
+    plt.plot(n_valores, resultados_kdtree[k], label='KDTree', marker='o')
+    plt.plot(n_valores, resultados_fuerza_bruta[k], label='Fuerza Bruta', marker='o')
+    plt.title('Comparación de Tiempos de Ejecución para KDTree y Fuerza Bruta')
+    plt.xlabel('n (Número de Datos)')
+    plt.ylabel('Running Time(ms)')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(file_name)
+    plt.clf()
+    # plt.show()
+
+for i in range(5):
+    graph_c(i,f'EjercicioC_k{i}.png')
+
+archivo = 'ejerD.csv'
+datos = np.genfromtxt(archivo, delimiter=',')
+resultados_kdtree = datos[::2]  # Seleccionar filas pares (0, 2, 4, ...)
+resultados_fuerza_bruta = datos[1::2]  # Seleccionar filas impares (1, 3, 5, ...)
+k = [5, 15, 25, 50, 75, 100, 125, 150, 200]
+n_valores = [1000, 1450, 1900, 2400]
+
+def graph_d(col,file_name):
+    plt.plot(k, resultados_kdtree[:,col], label='KDTree', marker='o')
+    plt.plot(k, resultados_fuerza_bruta[:,col], label='Fuerza Bruta', marker='o')
+    plt.title('Comparación de Tiempos de Ejecución para KDTree y Fuerza Bruta')
+    plt.xlabel('k (Número de clusteres)')
+    plt.ylabel('Running Time(ms)')
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(file_name)
+    plt.clf()
+    # plt.show()
+
+for i in range(4):
+    graph_d(i,f'EjercicioD_k{i}.png')
