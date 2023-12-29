@@ -1,5 +1,6 @@
 #include "Node.hpp"
 #include "KDTree.hpp"
+#include "GreedyVector.hpp"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -151,10 +152,8 @@ class Kmeans {
 
         vector<Point2D> auxCentroides = centroides;
         newCenters(clusters);
-        //updateCentroides(newCentroides);
-        //printVector(newCentroides);
 
-        double distanceThreshold = 48;
+        double distanceThreshold = 1;
         double distance = 0.0;
         for (int i = 0; i < centroides.size(); ++i){
             distance += EuclideanDistance(auxCentroides[i], this->centroides[i]);
@@ -174,11 +173,69 @@ class Kmeans {
         cont++;
         return KMeans_def(all_points,cont);
     }
+    vector<vector<Point2D>>
+      KMeans_fb(vector<Point2D> &all_points, int cont)
+      {
+          grd::GreedyVector<2> kdtree_centroides;
+          for (auto &row : centroides){
+              kdtree_centroides.insert(row);
+          }
+          kdtree_centroides.print();
+          vector<vector<Point2D>> clusters(centroides.size());
+          for (int i = 0; i < all_points.size(); i++){
+              vector<Point2D> num = kdtree_centroides.KNNBruteForce3(all_points[i], 1);
+              for (int j = 0; j < centroides.size(); ++j) {
+                  if (num[0] == centroides[j])
+                  {
+                      clusters[j].push_back(all_points[i]);
+                      break;
+                  }
+              }
+          }
+          vector<Point2D> auxCentroides = centroides;
+          newCenters(clusters);
 
-    void exportKmeansCSV(const string& filename,vector<Point2D> &all_points){
+          double distanceThreshold = 1;
+          double distance = 0.0;
+          for (int i = 0; i < centroides.size(); ++i){
+              distance += EuclideanDistance(auxCentroides[i], this->centroides[i]);
+          }
+          if (cont==maxIterations){
+              std::cout << "Algoritmo no convergió. Distancia: " << distance << std::endl;
+              return clusters;
+          }
+          if (distance < distanceThreshold)
+          {
+              std::cout << "Algoritmo convergió. Distancia: " << distance << std::endl;
+              return clusters;
+          }
+
+          std::cout << "Algoritmo NO convergió. Distancia: " << distance << std::endl;
+          cont++;
+          return KMeans_fb(all_points,cont);
+      }
+
+    void exportKmeansCSVkd(const string& filename,vector<Point2D> &all_points){
         ofstream myfile;
         vector<vector<Point2D>> puntos = KMeans_def(all_points,0);
-        myfile.open ("kmeans.csv");
+        myfile.open (filename);
+        myfile << centroides.size() << "\n";
+        for(int i=0; i<puntos.size(); i++){
+            myfile << puntos[i].size() << (i == puntos.size()-1 ? "\n" : ",");
+        }
+        for (int i = 0; i < centroides.size(); ++i)
+            myfile << centroides[i][0] << "," << centroides[i][1] << "\n";
+        for(vector<Point2D> p : puntos){
+            for(Point2D p2 : p){
+                myfile << p2[0] << "," << p2[1]<<"\n";
+            }
+        }
+        myfile.close();
+    }
+    void exportKmeansCSVfb(const string& filename,vector<Point2D> &all_points){
+        ofstream myfile;
+        vector<vector<Point2D>> puntos = KMeans_fb(all_points,0);
+        myfile.open (filename);
         myfile << centroides.size() << "\n";
         for(int i=0; i<puntos.size(); i++){
             myfile << puntos[i].size() << (i == puntos.size()-1 ? "\n" : ",");

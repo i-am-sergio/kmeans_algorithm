@@ -54,27 +54,6 @@ namespace kdt {
                 return result;
             }
 
-            // vector<vector<double>> searchKNN3(vector<double> point, int k) {
-            //     k = k+1;
-            //     priority_queue<pair<double, Node*>> nearestNeighbors;
-            //     KNNRecursive3(root,point,k,nearestNeighbors,0);
-            //     vector<vector<double>> kNeighbors;
-            //     while(!nearestNeighbors.empty()){
-            //         kNeighbors.push_back(nearestNeighbors.top().second->point);
-            //         nearestNeighbors.pop();
-            //     }
-            //     if(!kNeighbors.empty()) kNeighbors.pop_back();
-            //     return kNeighbors;
-            // }
-
-            // priority_queue<pair<double, Node*>> searchKNN4(vector<double> point, int k) {
-            //     k = k+1;
-            //     priority_queue<pair<double, Node*>> nearestNeighbors;
-            //     KNNRecursive3(root,point,k,nearestNeighbors,0);
-            //     return nearestNeighbors;
-            // }
-
-
         protected:
         
             Node * insertRecursivo(Node * current, vector<double> point, int depth = 0){
