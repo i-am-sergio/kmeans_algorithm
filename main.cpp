@@ -1,4 +1,3 @@
-#include "includes/KDTree.hpp"
 #include "includes/Kmeans.hpp"
 #include "utils/Reader.hpp"
 #include <iostream>
@@ -21,7 +20,8 @@ int main(){
     kmeans.printCentroides();
 
     //vector<vector<Point2D>> clusters = kmeans.KMeans_def(points);
-    kmeans.exportKmeansCSV("data.csv", points);
+    kmeans.exportKmeansCSVkd("cluster1.csv", points);
+    kmeans.exportKmeansCSVfb("cluster2.csv", points);
 
     // KMeans kmeans;
     // vector<Point2D> centroides = kmeans.obtenerTresPuntosAleatorios(points, 3);
