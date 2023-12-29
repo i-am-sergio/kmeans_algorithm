@@ -36,10 +36,10 @@ def draw_clusters(posiciones_centroides, clusteres, graph_name):
     for cluster in clusteres:
         x = [punto[0] for punto in cluster]
         y = [punto[1] for punto in cluster]
-        plt.scatter(x, y)
+        plt.scatter(x, y, s=20)
     # Dibujar los centroides
     for x, y in posiciones_centroides:
-        plt.scatter(x, y, marker='.', color='black', s=100)
+        plt.scatter(x, y, marker='*', color='black', s=50)
     plt.title("Clusters")
     plt.savefig(graph_name)
     plt.show()
