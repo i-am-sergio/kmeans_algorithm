@@ -57,8 +57,11 @@ def draw_clusters_result(file_name,graph_name):
     draw_clusters(posiciones_centroides, clusteres, graph_name)
 
 
-for i in range(1,4):
-    draw_clusters_result(f'clusters{i}.csv',f'{i}.png')
+
+draw_clusters_result('clusters1.csv','1.png')
+
+# for i in range(1,4):
+#     draw_clusters_result(f'clusters{i}.csv',f'{i}.png')
 
 
 # Utilizando el conjuntos de archivos adjunto en este trabajo que contiene 2400 puntos, analizar el tiempo
