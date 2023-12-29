@@ -13,7 +13,7 @@ namespace rdr {
         public:
             CSVReader(const string& filename) : filename(filename) {}
 
-            vector<vector<double>> readCSV(bool header = false, int numPoints = 2400) {
+            vector<vector<double>> readCSV(bool header, int numPoints) {
                 ifstream file(filename);
                 vector<vector<double>> data;
 

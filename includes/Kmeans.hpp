@@ -5,17 +5,18 @@
 #include <fstream>
 #include <vector>
 #include <random>
+#include <chrono>
 
 using namespace std;
 using namespace kdt;
 using Point2D = vector<double>;
 
-template <int numClusters> // u clusters
 class Kmeans {
 
     private:
+        int numClusters;
         vector<Point2D> centroides;
-        const int maxIterations = 100;
+        const int maxIterations = 10;
 
     protected:
 
@@ -90,7 +91,8 @@ class Kmeans {
 
     public:
     
-        Kmeans(const vector<Point2D> & puntos) {
+        Kmeans(const vector<Point2D> & puntos, int numClusters) {
+            this->numClusters = numClusters;
             obtenerCentroides(puntos);
         }
 
@@ -122,20 +124,20 @@ class Kmeans {
                 newCentroide = newCentroide / size;
             newCentroides.push_back(newCentroide);
         }
-        //return newCentroides;
         this->centroides = newCentroides;
-        printCentroides();
-        cout<<"1 vez"<<endl;
+        //printCentroides();
+        //cout<<"1 vez"<<endl;
     }
 
     vector<vector<Point2D>>
     KMeans_def(vector<Point2D> &all_points, int cont)
     {
+
         kdt::KDTree<2> kdtree_centroides;
         for (auto &row : centroides){
             kdtree_centroides.insert(row);
         }
-        kdtree_centroides.print();
+        //kdtree_centroides.print();
         vector<vector<Point2D>> clusters(centroides.size());
         for (int i = 0; i < all_points.size(); i++){
             vector<Point2D> num = kdtree_centroides.searchKNN2(all_points[i], 1);
@@ -147,29 +149,29 @@ class Kmeans {
                 }
             }
         }
-         for (int i = 0; i < clusters.size(); ++i)
-             std::cout << "cluster " << i + 1 << " => " << clusters[i].size() << std::endl;
+        // for (int i = 0; i < clusters.size(); ++i)
+        //     std::cout << "cluster " << i + 1 << " => " << clusters[i].size() << std::endl;
 
-        vector<Point2D> auxCentroides = centroides;
+        //vector<Point2D> auxCentroides = centroides;
         newCenters(clusters);
 
-        double distanceThreshold = 1;
-        double distance = 0.0;
-        for (int i = 0; i < centroides.size(); ++i){
-            distance += EuclideanDistance(auxCentroides[i], this->centroides[i]);
-        }
+        //double distanceThreshold = 1;
+        //double distance = 0.0;
+        //for (int i = 0; i < centroides.size(); ++i){
+        //    distance += EuclideanDistance(auxCentroides[i], this->centroides[i]);
+        //}
         if (cont==maxIterations){
-            std::cout << "Algoritmo no convergió. Distancia: " << distance << std::endl;
+            //std::cout << "Algoritmo no convergió. Distancia: " << distance << std::endl;
             return clusters;
         }
-        if (distance < distanceThreshold)
-        {
-            std::cout << "Algoritmo convergió. Distancia: " << distance << std::endl;
-            return clusters;
-        }
+        //if (distance < distanceThreshold)
+        //{
+        //    //std::cout << "Algoritmo convergió. Distancia: " << distance << std::endl;
+        //    return clusters;
+        //}
 
-        std::cout << "Algoritmo NO convergió. Distancia: " << distance << std::endl;
-        cout<<cont<<endl;
+        //std::cout << "Algoritmo NO convergió. Distancia: " << distance << std::endl;
+        //cout<<cont<<endl;
         cont++;
         return KMeans_def(all_points,cont);
     }
@@ -180,7 +182,7 @@ class Kmeans {
           for (auto &row : centroides){
               kdtree_centroides.insert(row);
           }
-          kdtree_centroides.print();
+          //kdtree_centroides.print();
           vector<vector<Point2D>> clusters(centroides.size());
           for (int i = 0; i < all_points.size(); i++){
               vector<Point2D> num = kdtree_centroides.KNNBruteForce3(all_points[i], 1);
@@ -192,32 +194,41 @@ class Kmeans {
                   }
               }
           }
-          vector<Point2D> auxCentroides = centroides;
+          //vector<Point2D> auxCentroides = centroides;
           newCenters(clusters);
 
-          double distanceThreshold = 1;
-          double distance = 0.0;
-          for (int i = 0; i < centroides.size(); ++i){
-              distance += EuclideanDistance(auxCentroides[i], this->centroides[i]);
-          }
+          //double distanceThreshold = 1;
+          //double distance = 0.0;
+          //for (int i = 0; i < centroides.size(); ++i){
+          //    distance += EuclideanDistance(auxCentroides[i], this->centroides[i]);
+          //}
           if (cont==maxIterations){
-              std::cout << "Algoritmo no convergió. Distancia: " << distance << std::endl;
+              //std::cout << "Algoritmo no convergió. Distancia: " << distance << std::endl;
               return clusters;
           }
-          if (distance < distanceThreshold)
-          {
-              std::cout << "Algoritmo convergió. Distancia: " << distance << std::endl;
-              return clusters;
-          }
+          //if (distance < distanceThreshold)
+          //{
+          //    //std::cout << "Algoritmo convergió. Distancia: " << distance << std::endl;
+          //    return clusters;
+          //}
 
-          std::cout << "Algoritmo NO convergió. Distancia: " << distance << std::endl;
+          //std::cout << "Algoritmo NO convergió. Distancia: " << distance << std::endl;
           cont++;
           return KMeans_fb(all_points,cont);
       }
 
-    void exportKmeansCSVkd(const string& filename,vector<Point2D> &all_points){
+    void exportKmeansCSVkd(const string& filename,vector<Point2D> &all_points, vector<double> &tiempoKd){
         ofstream myfile;
+        auto start = chrono::high_resolution_clock::now();
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<double, milli> tiempo;
+        start = chrono::high_resolution_clock::now();
         vector<vector<Point2D>> puntos = KMeans_def(all_points,0);
+        end = chrono::high_resolution_clock::now();
+        tiempo = end - start;
+        tiempoKd.push_back(tiempo.count());
+        cout << "Tiempo de ejecucion kd: " << tiempo.count() << " milisegundos." << endl;
+
         myfile.open (filename);
         myfile << centroides.size() << "\n";
         for(int i=0; i<puntos.size(); i++){
@@ -232,9 +243,19 @@ class Kmeans {
         }
         myfile.close();
     }
-    void exportKmeansCSVfb(const string& filename,vector<Point2D> &all_points){
+    void exportKmeansCSVfb(const string& filename,vector<Point2D> &all_points, vector<double> &tiempoFb){
         ofstream myfile;
+
+        auto start = chrono::high_resolution_clock::now();
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<double, milli> tiempo;
+        start = chrono::high_resolution_clock::now();
         vector<vector<Point2D>> puntos = KMeans_fb(all_points,0);
+        end = chrono::high_resolution_clock::now();
+        tiempo = end - start;
+        tiempoFb.push_back(tiempo.count());
+        cout << "Tiempo de ejecucion fb: " << tiempo.count() << " milisegundos." << endl;
+
         myfile.open (filename);
         myfile << centroides.size() << "\n";
         for(int i=0; i<puntos.size(); i++){
