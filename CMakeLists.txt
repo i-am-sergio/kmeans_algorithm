@@ -42,7 +42,7 @@ configure_file(${CMAKE_SOURCE_DIR}/data2k.csv ${CMAKE_BINARY_DIR}/data2k.csv COP
 add_executable(kmeans 
               includes/Node.hpp 
               includes/KDTree.hpp 
-              # utils/Reader.hpp 
+              utils/Reader.hpp 
               # utils/Grapher.hpp
               # utils/Tester.hpp
               # test.cpp

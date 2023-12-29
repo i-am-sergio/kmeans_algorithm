@@ -5,7 +5,6 @@
 #include <sstream>
 #include <vector>
 
-
 namespace rdr {
     
     using namespace std;
@@ -14,7 +13,7 @@ namespace rdr {
         public:
             CSVReader(const string& filename) : filename(filename) {}
 
-            vector<vector<double>> readCSV() {
+            vector<vector<double>> readCSV(bool header = false) {
                 ifstream file(filename);
                 vector<vector<double>> data;
 
@@ -24,6 +23,9 @@ namespace rdr {
                 }
 
                 string line;
+                
+                if(header) getline(file, line); // Ignora la primera linea (header)
+
                 while (getline(file, line)) {
                     vector<double> row;
                     stringstream ss(line);
