@@ -108,7 +108,7 @@ class Kmeans {
     }
 
     //vector<Point2D>
-    vector<Point2D> newCenters(vector<vector<Point2D>> clusteres)
+    void newCenters(vector<vector<Point2D>> &clusteres)
     {
         vector<Point2D> newCentroides;
         for (int i = 0; i < (int)clusteres.size(); i++)
@@ -121,38 +121,43 @@ class Kmeans {
                 newCentroide = newCentroide / size;
             newCentroides.push_back(newCentroide);
         }
-        return newCentroides;
+        //return newCentroides;
+        this->centroides = newCentroides;
+        printCentroides();
+        cout<<"1 vez"<<endl;
     }
 
     vector<vector<Point2D>>
-    KMeans_def(const vector<Point2D> &all_centroides, vector<Point2D> &all_points, int cont)
+    KMeans_def(vector<Point2D> &all_points, int cont)
     {
         kdt::KDTree<2> kdtree_centroides;
-        for (auto &row : all_centroides){
+        for (auto &row : centroides){
             kdtree_centroides.insert(row);
         }
-        vector<vector<Point2D>> clusters(all_centroides.size());
-        for (int i = 0; i < all_points.size(); i++)
-        {
+        kdtree_centroides.print();
+        vector<vector<Point2D>> clusters(centroides.size());
+        for (int i = 0; i < all_points.size(); i++){
             vector<Point2D> num = kdtree_centroides.searchKNN2(all_points[i], 1);
-            for (int j = 0; j < all_centroides.size(); ++j)
-            {
-                if (num[0] == all_centroides[j])
+            for (int j = 0; j < centroides.size(); ++j) {
+                if (num[0] == centroides[j])
                 {
                     clusters[j].push_back(all_points[i]);
                     break;
                 }
             }
         }
-        // for (int i = 0; i < clusters.size(); ++i)
-        //     std::cout << "cluster " << i + 1 << " => " << clusters[i].size() << std::endl;
-        vector<Point2D> newCentroides = newCenters(clusters);
-        printVector(newCentroides);
+         for (int i = 0; i < clusters.size(); ++i)
+             std::cout << "cluster " << i + 1 << " => " << clusters[i].size() << std::endl;
 
-        double distanceThreshold = 8.4;
+        vector<Point2D> auxCentroides = centroides;
+        newCenters(clusters);
+        //updateCentroides(newCentroides);
+        //printVector(newCentroides);
+
+        double distanceThreshold = 48;
         double distance = 0.0;
-        for (int i = 0; i < all_centroides.size(); ++i){
-            distance += EuclideanDistance(all_centroides[i], newCentroides[i]);
+        for (int i = 0; i < centroides.size(); ++i){
+            distance += EuclideanDistance(auxCentroides[i], this->centroides[i]);
         }
         if (cont==maxIterations){
             std::cout << "Algoritmo no convergió. Distancia: " << distance << std::endl;
@@ -165,38 +170,25 @@ class Kmeans {
         }
 
         std::cout << "Algoritmo NO convergió. Distancia: " << distance << std::endl;
+        cout<<cont<<endl;
         cont++;
-        return KMeans_def(newCentroides, all_points,cont);
-        std::cout << "Algoritmo no convergió. Distancia: " << distance << std::endl;
-    }
-
-    vector<vector<Point2D>>
-    KMeans_def(vector<Point2D> &all_points){
-        //obtenerCentroides(all_points);
-        vector<vector<Point2D>> aux = KMeans_def(this->centroides, all_points,0);
-        cout<<"Kmeans terminado"<<endl;
-        cout<<"Centroides: "<<endl;
-        for (int i = 0; i < centroides.size(); ++i)
-            std::cout << "cluster " << i + 1 << " => " << centroides[i] << std::endl;
-        return aux;
+        return KMeans_def(all_points,cont);
     }
 
     void exportKmeansCSV(const string& filename,vector<Point2D> &all_points){
         ofstream myfile;
-        vector<vector<Point2D>> puntos = KMeans_def(this->centroides, all_points,0);
+        vector<vector<Point2D>> puntos = KMeans_def(all_points,0);
         myfile.open ("kmeans.csv");
         myfile << centroides.size() << "\n";
-        for(vector<Point2D> p : puntos){
-            myfile << p.size() << ",";
+        for(int i=0; i<puntos.size(); i++){
+            myfile << puntos[i].size() << (i == puntos.size()-1 ? "\n" : ",");
         }
-        myfile<< "\n";
         for (int i = 0; i < centroides.size(); ++i)
             myfile << centroides[i][0] << "," << centroides[i][1] << "\n";
         for(vector<Point2D> p : puntos){
             for(Point2D p2 : p){
                 myfile << p2[0] << "," << p2[1]<<"\n";
             }
-            myfile <<"\n";
         }
         myfile.close();
     }
