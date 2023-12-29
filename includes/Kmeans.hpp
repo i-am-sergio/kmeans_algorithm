@@ -178,14 +178,14 @@ class Kmeans {
     vector<vector<Point2D>>
       KMeans_fb(vector<Point2D> &all_points, int cont)
       {
-          grd::GreedyVector<2> kdtree_centroides;
+          grd::GreedyVector<2> fb_centroides;
           for (auto &row : centroides){
-              kdtree_centroides.insert(row);
+              fb_centroides.insert(row);
           }
           //kdtree_centroides.print();
           vector<vector<Point2D>> clusters(centroides.size());
           for (int i = 0; i < all_points.size(); i++){
-              vector<Point2D> num = kdtree_centroides.KNNBruteForce3(all_points[i], 1);
+              vector<Point2D> num = fb_centroides.KNNBruteForce3(all_points[i], 1);
               for (int j = 0; j < centroides.size(); ++j) {
                   if (num[0] == centroides[j])
                   {
