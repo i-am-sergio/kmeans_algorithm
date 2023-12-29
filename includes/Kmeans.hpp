@@ -217,6 +217,25 @@ class Kmeans {
           return KMeans_fb(all_points,cont);
       }
 
+    void exportKmeansCSVkd(const string& filename,vector<Point2D> &all_points){
+        ofstream myfile;
+        vector<vector<Point2D>> puntos = KMeans_def(all_points,0);
+
+        myfile.open (filename);
+        myfile << centroides.size() << "\n";
+        for(int i=0; i<puntos.size(); i++){
+            myfile << puntos[i].size() << (i == puntos.size()-1 ? "\n" : ",");
+        }
+        for (int i = 0; i < centroides.size(); ++i)
+            myfile << centroides[i][0] << "," << centroides[i][1] << "\n";
+        for(vector<Point2D> p : puntos){
+            for(Point2D p2 : p){
+                myfile << p2[0] << "," << p2[1]<<"\n";
+            }
+        }
+        myfile.close();
+    }
+
     void exportKmeansCSVkd(const string& filename,vector<Point2D> &all_points, vector<double> &tiempoKd){
         ofstream myfile;
         auto start = chrono::high_resolution_clock::now();
@@ -243,6 +262,26 @@ class Kmeans {
         }
         myfile.close();
     }
+
+    void exportKmeansCSVfb(const string& filename,vector<Point2D> &all_points){
+        ofstream myfile;
+        vector<vector<Point2D>> puntos = KMeans_fb(all_points,0);
+
+        myfile.open (filename);
+        myfile << centroides.size() << "\n";
+        for(int i=0; i<puntos.size(); i++){
+            myfile << puntos[i].size() << (i == puntos.size()-1 ? "\n" : ",");
+        }
+        for (int i = 0; i < centroides.size(); ++i)
+            myfile << centroides[i][0] << "," << centroides[i][1] << "\n";
+        for(vector<Point2D> p : puntos){
+            for(Point2D p2 : p){
+                myfile << p2[0] << "," << p2[1]<<"\n";
+            }
+        }
+        myfile.close();
+    }
+    
     void exportKmeansCSVfb(const string& filename,vector<Point2D> &all_points, vector<double> &tiempoFb){
         ofstream myfile;
 
