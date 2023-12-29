@@ -16,12 +16,13 @@ int main(){
     vector<Point2D> points = rdr.readCSV(true);
     cout << "Points readed: " << points.size() << endl;
 
-    KDTree<2> tree;
     
-    Kmeans<6> kmeans(points);
+    Kmeans<3> kmeans(points);
     kmeans.printCentroides();
 
-    // cout<< boolalpha << tree.search({1,2}) << endl;
+    //vector<vector<Point2D>> clusters = kmeans.KMeans_def(points);
+    kmeans.exportKmeansCSV("data.csv", points);
+
     cout << "Finished!\n";
 
     return 0;

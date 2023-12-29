@@ -1,6 +1,7 @@
 #include "Node.hpp"
 #include "KDTree.hpp"
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <random>
 
@@ -13,6 +14,7 @@ class Kmeans {
 
     private:
         vector<Point2D> centroides;
+        const int maxIterations = 100;
 
     protected:
 
@@ -92,68 +94,111 @@ class Kmeans {
         }
 
         void printCentroides() {
-            for (int i=0; i<centroides.size(); i++) {
+            for (int i=0; i<(int)centroides.size(); i++) {
                 cout << centroides[i] << endl;
             }
         }
 
-        // void KMeans_BruteForce(vector<Point2D>& all_points){
-        //     vector<vector<Point2D>> clusteres;
-        //     for (int i=0; i<numClusters; i++) {
-        //         clusteres.push_back({});
-        //     }
-        //     for (int i=0; i<all_points.size(); i++) {
-        //         double minDistance = distanceL2(all_points[i], centroides[0]);
-        //         int cluster = 0;
-        //         for (int j=1; j<centroides.size(); j++) {
-        //             double distance = distanceL2(all_points[i], centroides[j]);
-        //             if (distance < minDistance) {
-        //                 minDistance = distance;
-        //                 cluster = j;
-        //             }
-        //         }
-        //         clusteres[cluster].push_back(all_points[i]);
-        //     }
-        //     vector<Point2D> newCentroides = newCenters(clusteres);
-        //     if (newCentroides != centroides) {
-        //         centroides = newCentroides;
-        //         KMeans_BruteForce();
-        //     }
-        // }
+    void printVector(const vector<Point2D> &vec)
+    {
+        std::cout << "Vector Elements: ";
+        for (const auto &element : vec)
+            std::cout << element << "\n";
+        std::cout << "\n";
+    }
 
-        // void Kmean_KDTree(vector<Point2D>& all_points) {
-        //     KDTree<2> kdtree_centroides;
-        //     for (auto &row : centroides)
-        //         kdtree_centroides.insert(row);
-        //     vector<vector<Point2D>> clusteres(numClusters);
-        //     for (int i=0; i<all_points.size(); i++) {
-        //         vector<Point2D> num = kdtree_centroides.searchKNN(all_points[i], 1);
-        //         for (int j=0; j<centroides.size(); ++j) {
-        //             if (num[0] == centroides[j]) {
-        //                 clusteres[j].push_back(all_points[i]);
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     vector<Point2D> newCentroides = newCenters(clusteres);
-        //     if (newCentroides != centroides) {
-        //         centroides = newCentroides;
-        //         Kmean_KDTree();
-        //     }
-        // }
+    //vector<Point2D>
+    vector<Point2D> newCenters(vector<vector<Point2D>> clusteres)
+    {
+        vector<Point2D> newCentroides;
+        for (int i = 0; i < (int)clusteres.size(); i++)
+        {
+            Point2D newCentroide = {0, 0};
+            for (const auto &point : clusteres[i])
+                newCentroide = newCentroide + point;
+            int size = clusteres[i].size();
+            if (size != 0)
+                newCentroide = newCentroide / size;
+            newCentroides.push_back(newCentroide);
+        }
+        return newCentroides;
+    }
 
-        // vector<Point2D> newCenters(vector<vector<Point2D>> clusteres) {
-        //     vector<Point2D> newCentroides;
-        //     for (int i=0; i<clusteres.size(); i++) {
-        //         Point2D newCentroide = {0, 0};
-        //         for (const auto &point : clusteres[i])
-        //             newCentroide = newCentroide + point;
-        //         int size = clusteres[i].size();
-        //         if (size != 0)
-        //             newCentroide = newCentroide / size;
-        //         newCentroides.push_back(newCentroide);
-        //     }
-        //     return newCentroides;
-        // }
+    vector<vector<Point2D>>
+    KMeans_def(const vector<Point2D> &all_centroides, vector<Point2D> &all_points, int cont)
+    {
+        kdt::KDTree<2> kdtree_centroides;
+        for (auto &row : all_centroides){
+            kdtree_centroides.insert(row);
+        }
+        vector<vector<Point2D>> clusters(all_centroides.size());
+        for (int i = 0; i < all_points.size(); i++)
+        {
+            vector<Point2D> num = kdtree_centroides.searchKNN(all_points[i], 1);
+            for (int j = 0; j < all_centroides.size(); ++j)
+            {
+                if (num[0] == all_centroides[j])
+                {
+                    clusters[j].push_back(all_points[i]);
+                    break;
+                }
+            }
+        }
+        // for (int i = 0; i < clusters.size(); ++i)
+        //     std::cout << "cluster " << i + 1 << " => " << clusters[i].size() << std::endl;
+        vector<Point2D> newCentroides = newCenters(clusters);
+        printVector(newCentroides);
 
+        double distanceThreshold = 8.4;
+        double distance = 0.0;
+        for (int i = 0; i < all_centroides.size(); ++i){
+            distance += EuclideanDistance(all_centroides[i], newCentroides[i]);
+        }
+        if (cont==maxIterations){
+            std::cout << "Algoritmo no convergió. Distancia: " << distance << std::endl;
+            return clusters;
+        }
+        if (distance < distanceThreshold)
+        {
+            std::cout << "Algoritmo convergió. Distancia: " << distance << std::endl;
+            return clusters;
+        }
+
+        std::cout << "Algoritmo NO convergió. Distancia: " << distance << std::endl;
+        cont++;
+        return KMeans_def(newCentroides, all_points,cont);
+        std::cout << "Algoritmo no convergió. Distancia: " << distance << std::endl;
+    }
+
+    vector<vector<Point2D>>
+    KMeans_def(vector<Point2D> &all_points){
+        //obtenerCentroides(all_points);
+        vector<vector<Point2D>> aux = KMeans_def(this->centroides, all_points,0);
+        cout<<"Kmeans terminado"<<endl;
+        cout<<"Centroides: "<<endl;
+        for (int i = 0; i < centroides.size(); ++i)
+            std::cout << "cluster " << i + 1 << " => " << centroides[i] << std::endl;
+        return aux;
+    }
+
+    void exportKmeansCSV(const string& filename,vector<Point2D> &all_points){
+        ofstream myfile;
+        vector<vector<Point2D>> puntos = KMeans_def(this->centroides, all_points,0);
+        myfile.open ("kmeans.csv");
+        myfile << centroides.size() << "\n";
+        for(vector<Point2D> p : puntos){
+            myfile << p.size() << ",";
+        }
+        myfile<< "\n";
+        for (int i = 0; i < centroides.size(); ++i)
+            myfile << centroides[i][0] << "," << centroides[i][1] << "\n";
+        for(vector<Point2D> p : puntos){
+            for(Point2D p2 : p){
+                myfile << p2[0] << "," << p2[1]<<"\n";
+            }
+            myfile <<"\n";
+        }
+        myfile.close();
+
+    }
 };
