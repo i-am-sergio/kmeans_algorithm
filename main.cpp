@@ -23,6 +23,12 @@ int main(){
     //vector<vector<Point2D>> clusters = kmeans.KMeans_def(points);
     kmeans.exportKmeansCSV("data.csv", points);
 
+    // KMeans kmeans;
+    // vector<Point2D> centroides = kmeans.obtenerTresPuntosAleatorios(points, 3);
+    //vector<vector<Point2D>> clusters = kmeans.KMeans_def(centroides, points);
+    // kmeans.exportKmeansCSV("data.csv", points, centroides);
+
+
     cout << "Finished!\n";
 
     return 0;

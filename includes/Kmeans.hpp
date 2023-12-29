@@ -134,7 +134,7 @@ class Kmeans {
         vector<vector<Point2D>> clusters(all_centroides.size());
         for (int i = 0; i < all_points.size(); i++)
         {
-            vector<Point2D> num = kdtree_centroides.searchKNN(all_points[i], 1);
+            vector<Point2D> num = kdtree_centroides.searchKNN2(all_points[i], 1);
             for (int j = 0; j < all_centroides.size(); ++j)
             {
                 if (num[0] == all_centroides[j])
@@ -199,6 +199,6 @@ class Kmeans {
             myfile <<"\n";
         }
         myfile.close();
-
     }
+
 };

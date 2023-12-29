@@ -32,14 +32,14 @@ def leer_csv_centroides(nombre_archivo :str) -> tuple | None:
 
 
 def draw_clusters(posiciones_centroides, clusteres, graph_name):
-    # Dibujar los centroides
-    for x, y in posiciones_centroides:
-        plt.scatter(x, y, marker='.', color='black', s=100)
     # Dibujar los puntos de cada clúster
     for cluster in clusteres:
         x = [punto[0] for punto in cluster]
         y = [punto[1] for punto in cluster]
         plt.scatter(x, y)
+    # Dibujar los centroides
+    for x, y in posiciones_centroides:
+        plt.scatter(x, y, marker='.', color='black', s=100)
     plt.title("Clusters")
     plt.savefig(graph_name)
     plt.show()
