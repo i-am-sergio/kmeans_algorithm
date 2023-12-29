@@ -46,12 +46,13 @@ int main(){
                 chrono::duration<double, milli> tiempo;
 
                 start = chrono::high_resolution_clock::now();
-                kmeans.exportKmeansCSVkd("cluster1.csv", points);
+                kmeans.exportKmeansCSVkd("cluster.csv", points);
                 end = chrono::high_resolution_clock::now();
 
                 tiempo = end - start;
                 cout << "Tiempo de ejecucion fb: " << tiempo.count() << " milisegundos." << endl;
 
+                system("python3 ../graph/draw.py");
                 break;
             }
             case 2:{
@@ -67,12 +68,13 @@ int main(){
                 chrono::duration<double, milli> tiempo;
 
                 start = chrono::high_resolution_clock::now();
-                kmeans.exportKmeansCSVkd("cluster2.csv", points);
+                kmeans.exportKmeansCSVkd("cluster.csv", points);
                 end = chrono::high_resolution_clock::now();  // Mover esta línea después de la ejecución
 
                 tiempo = end - start;
                 cout << "Tiempo de ejecucion fb: " << tiempo.count() << " milisegundos." << endl;
 
+                system("python3 ../graph/draw.py");
                 break;
             }
             case 3:{
