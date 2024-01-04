@@ -81,6 +81,10 @@ class Kmeans {
             this->centroides = _centroides;
         }
 
+        void setCentroides(const vector<Point2D> & puntos){
+            this->centroides = puntos;
+        }
+
         double distanceL2(const vector<double>& p1, const vector<double>& p2) {
             double distancia = 0.0;
             for (int i = 0; i < p1.size(); i++) {
@@ -91,9 +95,13 @@ class Kmeans {
 
     public:
     
-        Kmeans(const vector<Point2D> & puntos, int numClusters) {
+        Kmeans(const vector<Point2D> & puntos, int numClusters, const vector<Point2D> & centroides, bool centroidesAleatorios) {
             this->numClusters = numClusters;
-            obtenerCentroides(puntos);
+            if(centroidesAleatorios){
+                obtenerCentroides(puntos);
+            } else {
+                setCentroides(centroides);
+            }
         }
 
         void printCentroides() {

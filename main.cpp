@@ -13,6 +13,7 @@ using namespace rdr;
 int menuSearch(){
     int opt;
     cout << "\n***MENU PRINCIPAL***" << endl;
+    cout << "[5].- Probar K-Means KDTree con DATASET COVID" << endl;
     cout << "1.- Probar K-Means KDTree" << endl;
     cout << "2.- Probar K-Means Fuerza Bruta" << endl;
     cout << "3.- Ejercicio C" << endl;
@@ -25,7 +26,11 @@ int menuSearch(){
 
 int main(){
     using Point2D = vector<double>;
-    CSVReader rdr("data2k.csv");
+    CSVReader rdr("data5k.csv");
+
+
+    CSVReader reader2("puntos.csv");
+    vector<Point2D> _11_variables = reader2.readCSV(false,11);
 
     bool salir = false;
     int opt;
@@ -33,13 +38,36 @@ int main(){
 
         opt = menuSearch();
         switch (opt){
+            case 5: {
+                int n;
+                cout<<"Ingrese el numero de datos a leer: "; cin>>n;
+                vector<Point2D> points = rdr.readCSV(true,n);
+                cout << "Points readed: " << points.size() << endl;
+                
+                Kmeans kmeans(points, 11,_11_variables,false);
+
+                auto start = chrono::high_resolution_clock::now();
+                auto end = chrono::high_resolution_clock::now();
+                chrono::duration<double, milli> tiempo;
+
+                start = chrono::high_resolution_clock::now();
+                kmeans.exportKmeansCSVkd("cluster.csv", points);
+                end = chrono::high_resolution_clock::now();
+
+                tiempo = end - start;
+                cout << "Tiempo de ejecucion fb: " << tiempo.count() << " milisegundos." << endl;
+
+                system("python3 ../graph/draw.py");
+                break;
+            }
             case 1:{
                 int k, n;
                 cout<<"Ingrese el numero de Cluster: "; cin>>k;
                 cout<<"Ingrese el numero de datos a leer: "; cin>>n;
                 vector<Point2D> points = rdr.readCSV(true,n);
                 cout << "Points readed: " << points.size() << endl;
-                Kmeans kmeans(points, k);
+                
+                Kmeans kmeans(points, k,_11_variables,true);
 
                 auto start = chrono::high_resolution_clock::now();
                 auto end = chrono::high_resolution_clock::now();
@@ -61,7 +89,7 @@ int main(){
                 cout<<"Ingrese el numero de datos a leer: "; cin>>n;
                 vector<Point2D> points = rdr.readCSV(true,n);
                 cout << "Points readed: " << points.size() << endl;
-                Kmeans kmeans(points, k);
+                Kmeans kmeans(points, k, _11_variables,true);
 
                 auto start = chrono::high_resolution_clock::now();
                 auto end = chrono::high_resolution_clock::now();  // Mover esta línea después de la ejecución
@@ -88,7 +116,7 @@ int main(){
                     for(int j = 0; j < n.size(); j++){
                         vector<Point2D> points = rdr.readCSV(true,n[j]);
                         cout << "Points readed: " << points.size() << endl;
-                        Kmeans kmeans(points, k[i]);
+                        Kmeans kmeans(points, k[i], _11_variables,false);
                         //kmeans.printCentroides();
                         kmeans.exportKmeansCSVkd("cluster1.csv", points, tiempoKd); 
                         kmeans.exportKmeansCSVfb("cluster2.csv", points, tiempoFb); 
@@ -114,7 +142,7 @@ int main(){
                     for(int j = 0; j < n.size(); j++){
                         vector<Point2D> points = rdr.readCSV(true,n[j]);
                         cout << "Points readed: " << points.size() << endl;
-                        Kmeans kmeans(points, k[i]);
+                        Kmeans kmeans(points, k[i], _11_variables,false);
                         //kmeans.printCentroides();
                         kmeans.exportKmeansCSVkd("cluster1.csv", points, tiempoKd); 
                         kmeans.exportKmeansCSVfb("cluster2.csv", points, tiempoFb); 

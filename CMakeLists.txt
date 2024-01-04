@@ -38,6 +38,8 @@ set(CMAKE_NINJA_FORCE_RESPONSE_FILE "ON" CACHE BOOL "Force Ninja to use response
 
 # Agrega la siguiente línea para copiar el archivo CSV a la carpeta de compilación
 configure_file(${CMAKE_SOURCE_DIR}/data2k.csv ${CMAKE_BINARY_DIR}/data2k.csv COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/data5k.csv ${CMAKE_BINARY_DIR}/data5k.csv COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/puntos.csv ${CMAKE_BINARY_DIR}/puntos.csv COPYONLY)
 
 add_executable(kmeans 
               includes/Node.hpp 

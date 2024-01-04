@@ -32,9 +32,12 @@ namespace rdr {
                     stringstream ss(line);
                     string value;
 
+                    int d = 0;
                     while (getline(ss, value, ',')) {
                         // Convierte cada valor de cadena a un double y lo agrega a la fila
                         row.push_back(stod(value));
+                        d++;
+                        if(d==2) break;
                     }
                     // Agrega la fila al vector bidimensional
                     data.push_back(row);
